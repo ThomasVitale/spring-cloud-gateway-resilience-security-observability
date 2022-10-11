@@ -1,0 +1,41 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: edge-service
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "1"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "9000"
+    spec:
+      containers:
+        - image: ghcr.io/thomasvitale/devoxxuk/edge-service:initial
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: -javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.12.1.jar
+            - name: OTEL_SERVICE_NAME
+              value: book-service
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://tempo.observability-stack.svc.cluster.local:4317
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: "0.1"
+            limits:
+              memory: 512Mi
+              cpu: "2"
