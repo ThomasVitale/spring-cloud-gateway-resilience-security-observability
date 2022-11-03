@@ -3,17 +3,25 @@ server:
 
 logging:
   pattern:
-    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    enabled: false
+    sampling:
+      probability: 1.0
 
 spring:
   application:
     name: edge-service
+
   security:
     oauth2:
       client:
@@ -25,8 +33,7 @@ spring:
         provider:
           keycloak:
             issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/auth/realms/PolarBookshop
-  session:
-    store-type: redis
+
   cloud:
     gateway:
       default-filters:

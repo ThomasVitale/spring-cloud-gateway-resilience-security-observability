@@ -35,8 +35,7 @@ OAuth2/OpenID Connect. You can log in as Isabelle (isabelle/password) or Bjorn (
 
 ## Observability Stack
 
-Both Spring Boot applications are observable, as any cloud native application should. Prometheus metrics are exposed thanks to the
-Spring Boot Actuator library. Distributed tracing is enabled through Spring Cloud Sleuth.
+Both Spring Boot applications are observable, as any cloud native application should. Prometheus metrics are backed by Spring Boot Actuator and Micrometer Metrics. Distributed tracing is backed by OpenTelemetry and Micrometer Tracing.
 
 **Grafana** lets you query and visualize logs, metrics, and traces from your applications. After running the Docker Compose
 configuration as explained in the previous section, you can access Grafana on port 3000. It provides already dashboards

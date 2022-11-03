@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.4'
-    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
+    id 'org.springframework.boot' version '3.0.0-SNAPSHOT'
+    id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
 }
 
@@ -10,21 +10,24 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 ext {
-    set('otelVersion', "1.18.0")
     set('testcontainersVersion', "1.17.4")
     set('testKeycloakVersion', "2.3.0")
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+    implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
@@ -48,4 +51,5 @@ tasks.named('bootBuildImage') {
 		// For more info: https://github.com/thomasvitale/paketo-arm64
 		builder = "ghcr.io/thomasvitale/java-builder-arm64"
 	}
+    imageName = "${project.name}"
 }

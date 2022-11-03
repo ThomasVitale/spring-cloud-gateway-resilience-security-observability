@@ -5,7 +5,8 @@ services:
 
   book-service:
     # Use ghcr.io/thomasvitale/gateway/book-service:latest on AMD64
-    image: ghcr.io/thomasvitale/gateway/book-service:latest-arm64
+    # image: ghcr.io/thomasvitale/gateway/book-service:latest-arm64
+    image: book-service
     container_name: book-service
     depends_on:
       - fluent-bit
@@ -13,10 +14,8 @@ services:
     ports:
       - 9001:9001
     environment:
-      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.18.0.jar
-      - OTEL_SERVICE_NAME=book-service
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
-      - OTEL_METRICS_EXPORTER=none
+      - MANAGEMENT_TRACING_ENABLED=true
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
     logging:
       driver: fluentd
@@ -25,7 +24,8 @@ services:
 
   edge-service:
     # Use ghcr.io/thomasvitale/gateway/edge-service:latest on AMD64
-    image: ghcr.io/thomasvitale/gateway/edge-service:latest-arm64
+    # image: ghcr.io/thomasvitale/gateway/edge-service:latest-arm64
+    image: edge-service
     container_name: edge-service
     depends_on:
       - fluent-bit
@@ -34,11 +34,9 @@ services:
       - 9000:9000
     environment:
       - BOOK_SERVICE_URL=http://book-service:9001
-      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.18.0.jar
-      - OTEL_SERVICE_NAME=edge-service
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
-      - OTEL_METRICS_EXPORTER=none
-      - SPRING_REDIS_HOST=redis
+      - MANAGEMENT_TRACING_ENABLED=true
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
+      - SPRING_DATA_REDIS_HOST=redis
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
     logging:
       driver: fluentd
@@ -68,7 +66,7 @@ services:
   # Observability
 
   grafana:
-    image: grafana/grafana:9.0.5
+    image: grafana/grafana:9.2.3
     container_name: grafana
     depends_on:
       - loki
@@ -103,7 +101,7 @@ services:
       - ./platform/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
 
   prometheus:
-    image: prom/prometheus:v2.37.0
+    image: prom/prometheus:v2.39.0
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -111,11 +109,12 @@ services:
       - ./platform/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
   tempo:
-    image: grafana/tempo:1.4.1
+    image: grafana/tempo:1.5.0
     container_name: tempo
     command: -config.file /etc/tempo-config.yml
     ports:
       - "3110:3100"     # Tempo
-      - "4317:4317"     # OTel
+      - "4317:4317"     # OTLP
+      - "9411:9411"     # Zipkin
     volumes:
       - ./platform/tempo/tempo.yml:/etc/tempo-config.yml

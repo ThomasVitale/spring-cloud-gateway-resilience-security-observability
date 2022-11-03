@@ -16,6 +16,11 @@ datasources:
     isDefault: false
     version: 1
     editable: true
+    jsonData:
+      httpMethod: POST
+      exemplarTraceIdDestinations:
+        - name: trace_id
+          datasourceUid: tempo
   - name: Tempo
     type: tempo
     uid: tempo-thomas-vitale
@@ -57,6 +62,6 @@ datasources:
     jsonData:
       derivedFields:
         - datasourceUid: tempo-thomas-vitale
-          matcherRegex: \d+\-\d+\-\d+ \d+\:\d+\:\d+\.\d+\s+\w+\s+\[[\w-]+\,(\w+)\,\w+\]
+          matcherRegex: \[.+,(.+?),
           name: TraceID
           url: $${__value.raw}
