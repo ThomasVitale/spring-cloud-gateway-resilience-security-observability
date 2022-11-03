@@ -15,7 +15,6 @@ services:
     environment:
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
     logging:
       driver: fluentd
       options:
@@ -34,8 +33,6 @@ services:
       - BOOK_SERVICE_URL=http://book-service:9001
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
-      - SPRING_DATA_REDIS_HOST=redis
-      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
     logging:
       driver: fluentd
       options:
