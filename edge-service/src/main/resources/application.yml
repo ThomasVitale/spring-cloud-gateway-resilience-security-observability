@@ -22,23 +22,9 @@ spring:
   application:
     name: edge-service
 
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: edge-service
-            client-secret: polar-keycloak-secret
-            scope: openid
-        provider:
-          keycloak:
-            issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/auth/realms/PolarBookshop
-
   cloud:
     gateway:
       default-filters:
-        - SaveSession
-        - TokenRelay
         - name: RequestRateLimiter
           args:
             redis-rate-limiter:
@@ -53,10 +39,6 @@ spring:
           filters:
             - AddRequestHeader=X-Tenant,acme
             - AddResponseHeader=X-Genre,fantasy
-            - name: CircuitBreaker
-              args:
-                name: bookService
-                fallbackUri: forward:/books-fallback
             - name: Retry
               args:
                 retries: 3
@@ -64,17 +46,3 @@ spring:
                 backoff:
                   firstBackoff: 50ms
                   maxBackoff: 500ms
-
-resilience4j:
-  circuitbreaker:
-    instances:
-      bookService:
-        slidingWindowSize: 10
-        permittedNumberOfCallsInHalfOpenState: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10000
-        registerHealthIndicator: true
-  timelimiter:
-    instances:
-      bookService:
-        timeoutDuration: 3s

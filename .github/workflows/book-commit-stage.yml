@@ -4,7 +4,7 @@ on: push
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: thomasvitale/gateway/book-service
-  VERSION: latest
+  VERSION: rate-limiter
 
 jobs:
   build:

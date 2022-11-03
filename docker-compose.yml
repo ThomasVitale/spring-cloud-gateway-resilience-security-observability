@@ -4,8 +4,8 @@ services:
   # Applications
 
   book-service:
-    # Use ghcr.io/thomasvitale/gateway/book-service:latest on AMD64
-    image: ghcr.io/thomasvitale/gateway/book-service:latest-arm64
+    # Use ghcr.io/thomasvitale/gateway/book-service:rate-limiter on AMD64
+    image: ghcr.io/thomasvitale/gateway/book-service:rate-limiter-arm64
     container_name: book-service
     depends_on:
       - fluent-bit
@@ -15,15 +15,14 @@ services:
     environment:
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
-      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
     logging:
       driver: fluentd
       options:
         fluentd-address: 127.0.0.1:24224
 
   edge-service:
-    # Use ghcr.io/thomasvitale/gateway/edge-service:latest on AMD64
-    image: ghcr.io/thomasvitale/gateway/edge-service:latest-arm64
+    # Use ghcr.io/thomasvitale/gateway/edge-service:rate-limiter on AMD64
+    image: ghcr.io/thomasvitale/gateway/edge-service:rate-limiter-arm64
     container_name: edge-service
     depends_on:
       - fluent-bit
@@ -35,7 +34,6 @@ services:
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
       - SPRING_DATA_REDIS_HOST=redis
-      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
     logging:
       driver: fluentd
       options:
