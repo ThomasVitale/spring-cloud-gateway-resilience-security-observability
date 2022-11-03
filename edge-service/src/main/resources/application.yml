@@ -22,23 +22,9 @@ spring:
   application:
     name: edge-service
 
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: edge-service
-            client-secret: polar-keycloak-secret
-            scope: openid
-        provider:
-          keycloak:
-            issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/auth/realms/PolarBookshop
-
   cloud:
     gateway:
       default-filters:
-        - SaveSession
-        - TokenRelay
         - name: RequestRateLimiter
           args:
             redis-rate-limiter:
