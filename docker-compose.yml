@@ -5,8 +5,7 @@ services:
 
   book-service:
     # Use ghcr.io/thomasvitale/gateway/book-service:latest on AMD64
-    # image: ghcr.io/thomasvitale/gateway/book-service:latest-arm64
-    image: book-service
+    image: ghcr.io/thomasvitale/gateway/book-service:latest-arm64
     container_name: book-service
     depends_on:
       - fluent-bit
@@ -24,8 +23,7 @@ services:
 
   edge-service:
     # Use ghcr.io/thomasvitale/gateway/edge-service:latest on AMD64
-    # image: ghcr.io/thomasvitale/gateway/edge-service:latest-arm64
-    image: edge-service
+    image: ghcr.io/thomasvitale/gateway/edge-service:latest-arm64
     container_name: edge-service
     depends_on:
       - fluent-bit
