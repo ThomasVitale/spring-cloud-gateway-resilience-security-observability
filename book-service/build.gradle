@@ -28,7 +28,7 @@ dependencies {
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
     runtimeOnly "com.github.loki4j:loki-logback-appender:${lokiLogbackAppender}"
 
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    // implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
