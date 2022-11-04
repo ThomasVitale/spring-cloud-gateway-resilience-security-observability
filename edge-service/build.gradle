@@ -15,7 +15,6 @@ repositories {
 }
 
 ext {
-    set('lokiLogbackAppender', "1.3.2")
     set('springCloudVersion', "2022.0.0-RC1")
 }
 
@@ -26,7 +25,6 @@ dependencies {
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'
     implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    runtimeOnly "com.github.loki4j:loki-logback-appender:${lokiLogbackAppender}"
 
     // Gateway
     implementation 'org.springframework.boot:spring-boot-starter-webflux'

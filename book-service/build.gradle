@@ -15,7 +15,6 @@ repositories {
 }
 
 ext {
-    set('lokiLogbackAppender', "1.3.2")
     set('testcontainersVersion', "1.17.4")
     set('testKeycloakVersion', "2.3.0")
 }
@@ -26,7 +25,6 @@ dependencies {
     implementation 'io.micrometer:micrometer-tracing-bridge-otel'
     implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    runtimeOnly "com.github.loki4j:loki-logback-appender:${lokiLogbackAppender}"
 
     // implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-web'
