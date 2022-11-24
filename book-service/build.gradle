@@ -1,7 +1,7 @@
 plugins {
-    id 'org.springframework.boot' version '3.0.0-SNAPSHOT'
-    id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.thomasvitale'
@@ -10,12 +10,10 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
-    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 ext {
-    set('testcontainersVersion', "1.17.4")
+    set('testcontainersVersion', "1.17.6")
     set('testKeycloakVersion', "2.3.0")
 }
 
