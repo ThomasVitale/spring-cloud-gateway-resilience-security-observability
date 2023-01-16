@@ -13,6 +13,12 @@ to do that with Spring Security, OAuth2, and OpenID Connect, relying on Spring R
 Finally, I'll show you how to improve the observability of your system using Spring Boot Actuator
 and Spring Cloud Sleuth and relying on the Grafana stack.
 
+## Stack
+
+* Java 17
+* Spring Boot 3
+* Grafana OSS
+
 ## Usage
 
 You can use Docker Compose to set up the entire system, including applications, data services, and the Grafana observability stack.
@@ -24,11 +30,13 @@ provided by Spring Boot. For each application, run the following task:
 ./gradlew bootBuildImage
 ```
 
-Then, from the project root folder, run Docker Compose, after updating the docker-compose.yml file with your own images. If you prefer to use the ones provided with this project, you can use the current configuration without any changes and without the need to build the applications locally.
+Then, from the project root folder, run Docker Compose, after updating the `docker-compose.yml` file with your own images. If you prefer to use the ones provided with this project, you can use the current configuration without any changes and without the need to build the applications locally.
 
 ```bash
 docker-compose up -d
 ```
+
+The `docker-compose.yml` file in this project is configured to use pre-built images of Edge Service and Book Service. If you want to use them, ensure you enable the ones for your architecture (AMD64 or ARM64).
 
 The Edge Service application is exposed on port 9000 while Book Service on port 9001. The applications require authentication through
 OAuth2/OpenID Connect. You can log in as Isabelle (isabelle/password) or Bjorn (bjorn/password).
@@ -39,10 +47,10 @@ Both Spring Boot applications are observable, as any cloud native application sh
 
 **Grafana** lets you query and visualize logs, metrics, and traces from your applications. After running the Docker Compose
 configuration as explained in the previous section, you can access Grafana on port 3000. It provides already dashboards
-to visualize metrics from Spring Boot, Spring Cloud Gateway, and Spring Cloud Load Balancer. In the "Explore" panel,
+to visualize metrics from Spring Boot, Spring Cloud Gateway, and Spring Cloud Circuit Breaker. In the "Explore" panel,
 you can query logs from Loki, metrics from Prometheus, and traces from Tempo.
 
-**Fluent Bit** collects logs from all containers and forwards them to Loki.
+**Promtail** collects logs from all containers and forwards them to Loki.
 
 **Loki** is a log aggregation system part of the Grafana observability stack. "It's like Prometheus, but for logs."
 Logs are available for inspecting from Grafana.
