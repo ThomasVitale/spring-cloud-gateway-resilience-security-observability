@@ -44,6 +44,6 @@ tasks.named('test') {
 }
 
 tasks.named('bootBuildImage') {
-	builder = "ghcr.io/thomasvitale/java-builder-arm64"
+	builder = "ghcr.io/thomasvitale/paketo-builder"
 	imageName = "${project.name}"
 }
