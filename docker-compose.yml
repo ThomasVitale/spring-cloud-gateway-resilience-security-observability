@@ -7,8 +7,10 @@ services:
     # Use ghcr.io/thomasvitale/gateway/book-service:latest on AMD64
     image: ghcr.io/thomasvitale/gateway/book-service:latest-arm64
     container_name: book-service
+    labels:
+      logging: "promtail"
     depends_on:
-      - fluent-bit
+      - promtail
       - keycloak
     ports:
       - 9001:9001
@@ -16,17 +18,15 @@ services:
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
       - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 127.0.0.1:24224
 
   edge-service:
     # Use ghcr.io/thomasvitale/gateway/edge-service:latest on AMD64
     image: ghcr.io/thomasvitale/gateway/edge-service:latest-arm64
     container_name: edge-service
+    labels:
+      logging: "promtail"
     depends_on:
-      - fluent-bit
+      - promtail
       - keycloak
     ports:
       - 9000:9000
@@ -36,22 +36,22 @@ services:
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI=http://host.docker.internal:8080/realms/PolarBookshop
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 127.0.0.1:24224
 
   # Backing Services
 
   redis:
     image: redis:7
     container_name: redis
+    labels:
+      logging: "promtail"
     ports:
       - 6379:6379
   
   keycloak:
     image: quay.io/keycloak/keycloak:19.0
     container_name: "keycloak"
+    labels:
+      logging: "promtail"
     command: start-dev --import-realm
     volumes:
       - ./platform/keycloak:/opt/keycloak/data/import
@@ -64,7 +64,7 @@ services:
   # Observability
 
   grafana:
-    image: grafana/grafana:9.2.3
+    image: grafana/grafana:9.3.2
     container_name: grafana
     depends_on:
       - loki
@@ -73,33 +73,34 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=user
-      - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
     volumes:
       - ./platform/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./platform/grafana/dashboards:/etc/grafana/provisioning/dashboards
       - ./platform/grafana/grafana.ini:/etc/grafana/grafana.ini
 
   loki:
-    image: grafana/loki:2.6.1
+    image: grafana/loki:2.7.1
     container_name: loki
-    depends_on:
-      - fluent-bit
+    command: -config.file=/etc/loki/local-config.yaml
     ports:
       - "3100:3100"
 
-  fluent-bit:
-    image: grafana/fluent-bit-plugin-loki:2.6.1-amd64
-    container_name: fluent-bit
-    ports:
-      - "24224:24224"
-    environment:
-      - LOKI_URL=http://loki:3100/loki/api/v1/push
+  promtail:
+    image: grafana/promtail:2.7.1
+    container_name: promtail
     volumes:
-      - ./platform/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./platform/promtail/promtail.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
 
   prometheus:
-    image: prom/prometheus:v2.39.0
+    image: prom/prometheus:v2.41.0
     container_name: prometheus
     ports:
       - "9090:9090"
