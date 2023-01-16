@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.0'
+    id 'org.springframework.boot' version '3.0.1'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
@@ -9,12 +9,11 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
-    maven { url 'https://repo.spring.io/milestone' }
     mavenCentral()
 }
 
 ext {
-    set('springCloudVersion', "2022.0.0-RC2")
+    set('springCloudVersion', "2022.0.0")
 }
 
 dependencies {
@@ -58,10 +57,6 @@ tasks.named('test') {
 }
 
 tasks.named('bootBuildImage') {
-	if (System.getProperty( "os.arch" ).toLowerCase().startsWith('aarch')) {
-		// This builder is only for ARM64 systems.
-		// For more info: https://github.com/thomasvitale/paketo-arm64
-		builder = "ghcr.io/thomasvitale/java-builder-arm64"
-	}
-    imageName = "${project.name}"
+	builder = "ghcr.io/thomasvitale/java-builder-arm64"
+	imageName = "${project.name}"
 }
