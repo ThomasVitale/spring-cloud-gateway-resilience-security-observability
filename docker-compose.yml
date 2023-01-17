@@ -4,8 +4,7 @@ services:
   # Applications
 
   book-service:
-    # Use ghcr.io/thomasvitale/gateway/book-service:initial on AMD64
-    image: ghcr.io/thomasvitale/gateway/book-service:initial-arm64
+    image: # Build your own image here
     container_name: book-service
     labels:
       logging: "promtail"
