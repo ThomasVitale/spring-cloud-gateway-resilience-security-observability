@@ -64,5 +64,5 @@ tasks.named('test') {
 
 tasks.named('bootBuildImage') {
 	builder = "ghcr.io/thomasvitale/builder:tiny"
-    imageName = "${project.name}:security"
+    imageName = "${project.name}:main"
 }
