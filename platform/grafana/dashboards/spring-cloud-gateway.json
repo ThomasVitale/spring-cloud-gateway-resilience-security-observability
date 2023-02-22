@@ -43,7 +43,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -93,7 +93,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-thomas-vitale"
+            "uid": "prometheus"
           },
           "exemplar": true,
           "expr": "sum(spring_cloud_gateway_requests_seconds_count{job=~\"$gatewayService\"})",
@@ -108,7 +108,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -158,7 +158,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-thomas-vitale"
+            "uid": "prometheus"
           },
           "exemplar": true,
           "expr": "sum(spring_cloud_gateway_requests_seconds_count{outcome=\"SUCCESSFUL\", job=~\"$gatewayService\"})",
@@ -173,7 +173,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
@@ -224,7 +224,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus-thomas-vitale"
+            "uid": "prometheus"
           },
           "exemplar": true,
           "expr": "sum(spring_cloud_gateway_requests_seconds_count{outcome!=\"SUCCESSFUL\", job=~\"$gatewayService\"})",
@@ -256,7 +256,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -357,7 +357,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "description": "",
       "fill": 1,
@@ -460,7 +460,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "description": "",
       "fill": 1,
@@ -562,7 +562,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "description": "",
       "fill": 1,
@@ -664,7 +664,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -749,7 +749,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -834,7 +834,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -953,7 +953,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus-thomas-vitale"
+        "uid": "prometheus"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -1058,7 +1058,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus-thomas-vitale"
+          "uid": "prometheus"
         },
         "definition": "label_values(spring_cloud_gateway_requests_seconds_count,job)",
         "hide": 0,
@@ -1092,7 +1092,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "prometheus-thomas-vitale"
+          "uid": "prometheus"
         },
         "definition": "label_values(spring_cloud_gateway_requests_seconds_count,routeId)",
         "hide": 0,

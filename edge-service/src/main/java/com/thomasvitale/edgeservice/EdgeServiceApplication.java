@@ -1,5 +1,7 @@
 package com.thomasvitale.edgeservice;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
@@ -27,8 +29,11 @@ public class EdgeServiceApplication {
 @RestController
 class FallbackController {
 
+    private static final Logger log = LoggerFactory.getLogger(FallbackController.class);
+
     @GetMapping("/books-fallback")
     Flux<Void> getBooksFallback() {
+        log.info("Fallback for book service");
         return Flux.empty();
     }
 
