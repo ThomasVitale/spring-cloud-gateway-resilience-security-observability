@@ -7,7 +7,6 @@ services:
     image: book-service:initial
     container_name: book-service
     depends_on:
-      - fluent-bit
       - keycloak
     ports:
       - 9001:9001
@@ -20,7 +19,6 @@ services:
     image: edge-service:initial
     container_name: edge-service
     depends_on:
-      - fluent-bit
       - keycloak
       - redis
     ports:
@@ -39,16 +37,10 @@ services:
       - fluent-bit
     ports:
       - 6379:6379
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 127.0.0.1:24224
   
   keycloak:
     image: quay.io/keycloak/keycloak:19.0
     container_name: keycloak
-    depends_on:
-      - fluent-bit
     command: start-dev --import-realm
     volumes:
       - ./platform/keycloak:/opt/keycloak/data/import
@@ -57,10 +49,6 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=password
     ports:
       - 8080:8080
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 127.0.0.1:24224
 
   # Observability
 
@@ -85,21 +73,9 @@ services:
   loki:
     image: grafana/loki:2.7.3
     container_name: loki
-    depends_on:
-      - fluent-bit
     command: -config.file=/etc/loki/local-config.yaml
     ports:
       - "3100:3100"
-  
-  fluent-bit:
-    image: ghcr.io/thomasvitale/fluent-bit-plugin-loki:2.7.3
-    container_name: fluent-bit
-    ports:
-      - "24224:24224"
-    environment:
-      - LOKI_URL=http://loki:3100/loki/api/v1/push
-    volumes:
-      - ./platform/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
 
   prometheus:
     image: prom/prometheus:v2.42.0

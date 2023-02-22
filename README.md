@@ -48,8 +48,6 @@ configuration as explained in the previous section, you can access Grafana on po
 to visualize metrics from Spring Boot, Spring Cloud Gateway, and Spring Cloud Circuit Breaker. In the "Explore" panel,
 you can query logs from Loki, metrics from Prometheus, and traces from Tempo.
 
-**Fluent Bit** collects logs from all containers and forwards them to Loki.
-
 **Loki** is a log aggregation system part of the Grafana observability stack. "It's like Prometheus, but for logs."
 Logs are available for inspecting from Grafana.
 
