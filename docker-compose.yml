@@ -1,37 +1,33 @@
-version: "3.8"
 services:
 
   # Applications
 
   book-service:
-    # Use ghcr.io/thomasvitale/gateway/book-service:initial on AMD64
-    image: ghcr.io/thomasvitale/gateway/book-service:initial-arm64
+    # Build image with "./gradlew bootBuildImage from book-service project"
+    image: book-service:initial
     container_name: book-service
-    labels:
-      logging: "promtail"
     depends_on:
-      - promtail
+      - fluent-bit
       - keycloak
     ports:
       - 9001:9001
     environment:
-      - MANAGEMENT_TRACING_ENABLED=true
+      - LOKI_URI=http://loki:3100/loki/api/v1/push
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
 
   edge-service:
-    # Use ghcr.io/thomasvitale/gateway/edge-service:initial on AMD64
-    image: ghcr.io/thomasvitale/gateway/edge-service:initial-arm64
+    # Build image with "./gradlew bootBuildImage from edge-service project"
+    image: edge-service:initial
     container_name: edge-service
-    labels:
-      logging: "promtail"
     depends_on:
-      - promtail
+      - fluent-bit
       - keycloak
+      - redis
     ports:
       - 9000:9000
     environment:
       - BOOK_SERVICE_URL=http://book-service:9001
-      - MANAGEMENT_TRACING_ENABLED=true
+      - LOKI_URI=http://loki:3100/loki/api/v1/push
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://tempo:9411
 
   # Backing Services
@@ -39,16 +35,20 @@ services:
   redis:
     image: redis:7
     container_name: redis
-    labels:
-      logging: "promtail"
+    depends_on:
+      - fluent-bit
     ports:
       - 6379:6379
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
   
   keycloak:
     image: quay.io/keycloak/keycloak:19.0
-    container_name: "keycloak"
-    labels:
-      logging: "promtail"
+    container_name: keycloak
+    depends_on:
+      - fluent-bit
     command: start-dev --import-realm
     volumes:
       - ./platform/keycloak:/opt/keycloak/data/import
@@ -57,11 +57,15 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=password
     ports:
       - 8080:8080
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
 
   # Observability
 
   grafana:
-    image: grafana/grafana:9.3.2
+    image: grafana/grafana:9.3.6
     container_name: grafana
     depends_on:
       - loki
@@ -79,25 +83,26 @@ services:
       - ./platform/grafana/grafana.ini:/etc/grafana/grafana.ini
 
   loki:
-    image: grafana/loki:2.7.1
+    image: grafana/loki:2.7.3
     container_name: loki
+    depends_on:
+      - fluent-bit
     command: -config.file=/etc/loki/local-config.yaml
     ports:
       - "3100:3100"
-
-  promtail:
-    image: grafana/promtail:2.7.1
-    container_name: promtail
+  
+  fluent-bit:
+    image: ghcr.io/thomasvitale/fluent-bit-plugin-loki:2.7.3
+    container_name: fluent-bit
+    ports:
+      - "24224:24224"
+    environment:
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
     volumes:
-      - ./platform/promtail/promtail.yml:/etc/promtail/config.yml
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/config.yml
-    depends_on:
-      - loki
+      - ./platform/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
 
   prometheus:
-    image: prom/prometheus:v2.41.0
+    image: prom/prometheus:v2.42.0
     container_name: prometheus
     ports:
       - "9090:9090"
@@ -105,11 +110,11 @@ services:
       - ./platform/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
   tempo:
-    image: grafana/tempo:1.5.0
+    image: grafana/tempo:2.0.0
     container_name: tempo
     command: -config.file /etc/tempo-config.yml
     ports:
-      - "3110:3100"     # Tempo
+      - "3110:3110"     # Tempo
       - "4317:4317"     # OTLP
       - "9411:9411"     # Zipkin
     volumes:
