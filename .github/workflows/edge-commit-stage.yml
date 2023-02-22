@@ -4,7 +4,7 @@ on: push
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: thomasvitale/gateway/edge-service
-  VERSION: latest
+  VERSION: security
 
 jobs:
   build:
