@@ -90,7 +90,7 @@ services:
     container_name: tempo
     command: -config.file /etc/tempo-config.yml
     ports:
-      - "3110:3110"     # Tempo
+      - "3110:3100"     # Tempo
       - "4317:4317"     # OTLP
       - "9411:9411"     # Zipkin
     volumes:
