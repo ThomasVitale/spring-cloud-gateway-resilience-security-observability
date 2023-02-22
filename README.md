@@ -30,13 +30,11 @@ provided by Spring Boot. For each application, run the following task:
 ./gradlew bootBuildImage
 ```
 
-Then, from the project root folder, run Docker Compose, after updating the `docker-compose.yml` file with your own images. If you prefer to use the ones provided with this project, you can use the current configuration without any changes and without the need to build the applications locally.
+Then, from the project root folder, run Docker Compose.
 
 ```bash
 docker-compose up -d
 ```
-
-The `docker-compose.yml` file in this project is configured to use pre-built images of Edge Service and Book Service. If you want to use them, ensure you enable the ones for your architecture (AMD64 or ARM64).
 
 The Edge Service application is exposed on port 9000 while Book Service on port 9001. The applications require authentication through
 OAuth2/OpenID Connect. You can log in as Isabelle (isabelle/password) or Bjorn (bjorn/password).
@@ -49,8 +47,6 @@ Both Spring Boot applications are observable, as any cloud native application sh
 configuration as explained in the previous section, you can access Grafana on port 3000. It provides already dashboards
 to visualize metrics from Spring Boot, Spring Cloud Gateway, and Spring Cloud Circuit Breaker. In the "Explore" panel,
 you can query logs from Loki, metrics from Prometheus, and traces from Tempo.
-
-**Promtail** collects logs from all containers and forwards them to Loki.
 
 **Loki** is a log aggregation system part of the Grafana observability stack. "It's like Prometheus, but for logs."
 Logs are available for inspecting from Grafana.
