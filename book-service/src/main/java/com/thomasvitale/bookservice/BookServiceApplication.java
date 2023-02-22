@@ -42,7 +42,7 @@ class BookController {
     private static final Logger log = LoggerFactory.getLogger(BookController.class);
 
     @GetMapping("books")
-    public Iterable<Book> getBooks() {
+    public List<Book> getBooks() {
         log.info("Returning list of books in the catalog");
         return List.of(
                 new Book("His Dark Materials"),
