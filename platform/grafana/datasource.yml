@@ -8,9 +8,8 @@ deleteDatasources:
 datasources:
   - name: Prometheus
     type: prometheus
-    uid: prometheus-thomas-vitale
+    uid: prometheus
     access: proxy
-    orgId: 1
     url: http://prometheus:9090
     basicAuth: false
     isDefault: false
@@ -23,9 +22,8 @@ datasources:
           datasourceUid: tempo
   - name: Tempo
     type: tempo
-    uid: tempo-thomas-vitale
+    uid: tempo
     access: proxy
-    orgId: 1
     url: http://tempo:3100
     basicAuth: false
     isDefault: false
@@ -33,27 +31,36 @@ datasources:
     editable: true
     jsonData:
       httpMethod: GET
+      tracesToMetrics:
+        datasourceUid: prometheus
+        tags: [ { key: 'service.name', value: 'application' }, { key: 'org' }, { key: 'method' }, { key: 'uri' }, { key: 'outcome' }, { key: 'status' }, { key: 'exception' } ]
+        queries:
+          - name: 'Throughput'
+            query: 'sum(rate(http_server_requests_seconds_count{$$__tags}[$$__rate_interval]))'
+          - name: 'Latency'
+            query: 'histogram_quantile(1.00, sum(rate(http_server_requests_seconds_bucket{$$__tags}[$$__rate_interval])) by (le))'
       tracesToLogs:
-        datasourceUid: 'loki-thomas-vitale'
+        datasourceUid: 'loki'
         tags: [ 'instance', 'pod', 'namespace', 'hostname' ]
-        mappedTags: [ { key: 'service.name', value: 'application' }  ]
+        mappedTags: [ { key: 'org' }, { key: 'service.name', value: 'application' }  ]
         mapTagNamesEnabled: true
         spanStartTimeShift: '1h'
         spanEndTimeShift: '1h'
         filterByTraceID: true
         filterBySpanID: false
         lokiSearch: true
+      lokiSearch:
+        datasourceUid: loki
       serviceMap:
-        datasourceUid: 'prometheus-thomas-vitale'
+        datasourceUid: prometheus
       search:
         hide: false
       nodeGraph:
         enabled: true
   - name: Loki
     type: loki
-    uid: loki-thomas-vitale
+    uid: loki
     access: proxy
-    orgId: 1
     url: http://loki:3100
     basicAuth: false
     isDefault: true
@@ -61,7 +68,7 @@ datasources:
     editable: true
     jsonData:
       derivedFields:
-        - datasourceUid: tempo-thomas-vitale
+        - datasourceUid: tempo
           matcherRegex: \[.+,(.+?),
-          name: TraceID
+          name: traceId
           url: $${__value.raw}
