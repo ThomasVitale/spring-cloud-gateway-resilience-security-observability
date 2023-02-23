@@ -4,7 +4,7 @@ services:
 
   book-service:
     # Build image with "./gradlew bootBuildImage from book-service project"
-    image: book-service:main
+    image: book-service:native
     container_name: book-service
     depends_on:
       - keycloak
@@ -17,7 +17,7 @@ services:
 
   edge-service:
     # Build image with "./gradlew bootBuildImage from edge-service project"
-    image: edge-service:main
+    image: edge-service:native
     container_name: edge-service
     depends_on:
       - keycloak

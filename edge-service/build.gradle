@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.2'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.graalvm.buildtools.native' version '0.9.19'
 }
 
 group = 'com.thomasvitale'
@@ -42,7 +43,7 @@ dependencies {
     implementation 'org.springframework.session:spring-session-data-redis'
 
     // Only on Apple Silicon. Why it's necessary: https://github.com/netty/netty/issues/11020
-    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.84.Final:osx-aarch_64'
+    // runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.84.Final:osx-aarch_64'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -64,5 +65,5 @@ tasks.named('test') {
 
 tasks.named('bootBuildImage') {
 	builder = "ghcr.io/thomasvitale/builder:tiny"
-    imageName = "${project.name}:main"
+    imageName = "${project.name}:native"
 }
