@@ -1,0 +1,14 @@
+services:
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2
+    container_name: keycloak
+    command: start-dev --import-realm
+    volumes:
+      - ./platform/keycloak:/opt/keycloak/data/import
+    environment:
+      - KEYCLOAK_ADMIN=user
+      - KEYCLOAK_ADMIN_PASSWORD=password
+      - JAVA_TOOL_OPTIONS=-XX:UseSVE=0
+    ports:
+      - 8080:8080

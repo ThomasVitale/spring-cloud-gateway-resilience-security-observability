@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directories:
+      - "/book-service"
+      - "/edge-service"
+    schedule:
+      interval: daily
+      time: "23:00"
+      timezone: Europe/Copenhagen
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps:"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: daily
+      time: "00:30"
+      timezone: Europe/Copenhagen
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+    commit-message:
+      prefix: "deps:"

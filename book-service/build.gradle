@@ -1,43 +1,46 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.0.2'
-    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.thomasvitale'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(24)
+        nativeImageCapable = true
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
 ext {
-    set('testcontainersVersion', "1.17.6")
-    set('testKeycloakVersion', "2.3.0")
+    set('arconiaVersion', "0.10.0")
+    set('testKeycloakVersion', "3.7.0")
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
-    implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
-
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    runtimeOnly 'com.github.loki4j:loki-logback-appender:1.3.2'
+    implementation 'io.arconia:arconia-opentelemetry-spring-boot-starter'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    testAndDevelopmentOnly 'io.arconia:arconia-dev-services-opentelemetry-lgtm'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.springframework:spring-webflux'
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation "com.github.dasniko:testcontainers-keycloak:${testKeycloakVersion}"
 }
 
 dependencyManagement {
     imports {
-        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+        mavenBom "io.arconia:arconia-bom:${arconiaVersion}"
     }
 }
 
@@ -46,6 +49,6 @@ tasks.named('test') {
 }
 
 tasks.named('bootBuildImage') {
-	builder = "ghcr.io/thomasvitale/builder:tiny"
+    builder = "docker.io/paketobuildpacks/builder-noble-java-tiny"
     imageName = "${project.name}:main"
 }

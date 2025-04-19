@@ -11,13 +11,14 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
 
 @SpringBootApplication
 public class EdgeServiceApplication {
 
     public static void main(String[] args) {
+        Hooks.enableAutomaticContextPropagation();
         SpringApplication.run(EdgeServiceApplication.class, args);
     }
 

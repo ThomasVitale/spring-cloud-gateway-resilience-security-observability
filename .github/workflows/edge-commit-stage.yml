@@ -1,84 +1,71 @@
-name: Edge Service - Commit Stage
+name: Book Service - Commit Stage
 on: push
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: thomasvitale/gateway/edge-service
-  VERSION: security
+  VERSION: main
 
 jobs:
   build:
     name: Build and Test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       security-events: write
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: Set up Java
-        uses: actions/setup-java@v3
+      - name: Check out source code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-      - name: Source code vulnerability scanning
-        uses: aquasecurity/trivy-action@master
+          fetch-depth: 0
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@6f327093bb6a42fe5eac053d21b168c46aa46f22 # v1.2.4
         with:
-          scan-type: 'fs'
-          scan-ref: 'edge-service'
-          format: 'sarif'
-          output: 'trivy-results-source-code.sarif'
-      - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v2
-        if: success() || failure()
-        with:
-          sarif_file: 'trivy-results-source-code.sarif'
-          category: source-code
+          java-version: '24'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build, unit tests and integration tests
         run: |
           cd edge-service
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew clean build
+
   package:
     name: Package and Publish
     needs: [ build ]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
       security-events: write
     steps:
       - name: Check out source code
-        uses: actions/checkout@v3
-      - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
+          fetch-depth: 0
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@6f327093bb6a42fe5eac053d21b168c46aa46f22 # v1.2.4
+        with:
+          java-version: '24'
+          distribution: 'graalvm-community'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build container image
         run: |
           cd edge-service
           chmod +x gradlew
           ./gradlew bootBuildImage \
             --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-      - name: OCI image vulnerability scanning
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
-          format: 'sarif'
-          output: 'trivy-results-oci-image.sarif'
-      - name: Upload vulnerability report
-        uses: github/codeql-action/upload-sarif@v2
-        if: success() || failure()
-        with:
-          sarif_file: 'trivy-results-oci-image.sarif'
+
       - name: Authenticate with the container registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
-          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.MY_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+
       - name: Publish container image
         run: docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}

@@ -10,30 +10,33 @@ implement solutions to improve the resilience of your system with patterns like 
 and rate limiters using Spring Cloud Circuit Breaker and Resilience4J. Since the gateway is the entry point of your
 system, it’s also an excellent candidate to implement security concerns like user authentication. I'll show you how
 to do that with Spring Security, OAuth2, and OpenID Connect, relying on Spring Redis Reactive to manage sessions.
-Finally, I'll show you how to improve the observability of your system using Spring Boot Actuator
-and Spring Cloud Sleuth and relying on the Grafana stack.
+Finally, I'll show you how to improve the observability of your system using Spring Boot Actuator, Micrometer,
+and OpenTelemetry.
 
 ## Stack
 
-* Java 17
-* Spring Boot 3
-* Grafana OSS
+* Java 24
+* Spring Boot 3.4
+* Podman/Docker
 
 ## Usage
 
-You can use Docker Compose to set up the entire system, including applications, data services, and the Grafana observability stack.
+First, run Keycloak from the project root folder, using either Podman or Docker.
 
-First, package both the Edge Service and Book Service application as container images leveraging the Cloud Native Buildpacks integration
-provided by Spring Boot. For each application, run the following task:
-
-```bash
-./gradlew bootBuildImage
+```shell
+podman compose up -d
 ```
 
-Then, from the project root folder, run Docker Compose.
+Then, you can reach of the Spring Boot applications using Gradle:
 
-```bash
-docker-compose up -d
+```shell
+./gradlew bootRun
+```
+
+Alternatively, you can use the [Arconia CLI](https://arconia.io/docs/arconia-cli/latest/index.html) to start each application in development mode:
+
+```shell
+arconia dev
 ```
 
 The Edge Service application is exposed on port 9000 while Book Service on port 9001. The applications require authentication through
@@ -41,18 +44,17 @@ OAuth2/OpenID Connect. You can log in as Isabelle (isabelle/password) or Bjorn (
 
 ## Observability Stack
 
-Both Spring Boot applications are observable, as any cloud native application should. Prometheus metrics are backed by Spring Boot Actuator and Micrometer Metrics. Distributed tracing is backed by OpenTelemetry and Micrometer Tracing.
+Both Spring Boot applications are observable, as any cloud native application should. Using [Arconia OpenTelemetry](https://arconia.io/docs/arconia/latest/opentelemetry/), both applications are configured to export logs, metrics, and traces automatically to an OpenTelemetry backend.
 
-**Grafana** lets you query and visualize logs, metrics, and traces from your applications. After running the Docker Compose
-configuration as explained in the previous section, you can access Grafana on port 3000. It provides already dashboards
-to visualize metrics from Spring Boot, Spring Cloud Gateway, and Spring Cloud Circuit Breaker. In the "Explore" panel,
-you can query logs from Loki, metrics from Prometheus, and traces from Tempo.
+[Arconia Dev Services](https://arconia.io/docs/arconia/latest/dev-services/) provide zero-code dev services for a superior developer experience. When you run the Spring Boot applications, a Grafana observability platform based on OpenTelemetry is automatically run via Testcontainers and the applications configured to export telemetry to it, giving you the possibility to visualize and explore your application’s telemetry data during development and testing.
 
-**Loki** is a log aggregation system part of the Grafana observability stack. "It's like Prometheus, but for logs."
-Logs are available for inspecting from Grafana.
+The application logs will show you the URL where you can access the Grafana observability platform.
 
-**Tempo** is a distributed tracing backend part of the Grafana observability stack. Spring Boot applications sends traces to Tempo,
-which made them available for inspecting from Grafana. The traces follows the OpenTelemetry format and protocol.
+```log
+...o.t.grafana.LgtmStackContainer: Access to the Grafana dashboard: http://localhost:#####
+```
 
-**Prometheus** is a monitoring system part of the Grafana observability stack. It parses the metrics endpoints exposed by Spring Boot
-applications (`/actuator/prometheus`). Metrics are available for inspecting and dashboarding from Grafana.
+By default, logs, metrics, and traces are exported via OTLP using the HTTP/Protobuf format.
+
+In Grafana, you can query logs and traces from the "Explore" page, selecting the "Loki" and "Tempo" data sources, respectively.
+You can also explore metrics in "Drilldown > Metrics".

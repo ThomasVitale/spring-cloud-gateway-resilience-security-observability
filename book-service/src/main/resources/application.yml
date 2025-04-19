@@ -1,10 +1,6 @@
 server:
   port: 9001
 
-logging:
-  pattern:
-    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
-
 management:
   endpoints:
     web:
@@ -17,19 +13,10 @@ management:
       show-details: always
       show-components: always
   metrics:
-    tags:
-      application: ${spring.application.name}
     distribution:
       percentiles-histogram:
         all: true
         http.server.requests: true
-  tracing:
-    sampling:
-      probability: 1.0
-  prometheus:
-    metrics:
-      export:
-        step: 10s
   info:
     env:
       enabled: true
@@ -47,3 +34,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${KEYCLOAK_URL:http://localhost:8080}/realms/PolarBookshop
+
+arconia:
+  otel:
+    metrics:
+      interval: 5s
