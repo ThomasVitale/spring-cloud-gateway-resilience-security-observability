@@ -1,4 +1,4 @@
-name: Book Service - Commit Stage
+name: Edge Service - Commit Stage
 on: push
 
 env:
