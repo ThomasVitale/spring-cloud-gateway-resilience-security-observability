@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.5'
+    id 'org.springframework.boot' version '3.5.7'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(25)
         nativeImageCapable = true
     }
 }
@@ -19,8 +19,8 @@ repositories {
 }
 
 ext {
-    set('arconiaVersion', "0.10.0")
-    set('springCloudVersion', "2024.0.1")
+    set('arconiaVersion', "0.18.0")
+    set('springCloudVersion', "2025.0.0")
 }
 
 dependencies {
@@ -29,7 +29,7 @@ dependencies {
     implementation 'io.arconia:arconia-opentelemetry-spring-boot-starter'
 
     // Gateway
-    implementation 'org.springframework.cloud:spring-cloud-starter-gateway'
+    implementation 'org.springframework.cloud:spring-cloud-starter-gateway-server-webflux'
 
     // Circuit Breaker
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
@@ -46,7 +46,7 @@ dependencies {
     runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.119.Final:osx-aarch_64'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testAndDevelopmentOnly 'io.arconia:arconia-dev-services-opentelemetry-lgtm'
+    testAndDevelopmentOnly 'io.arconia:arconia-dev-services-lgtm'
     testAndDevelopmentOnly 'io.arconia:arconia-dev-services-redis'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

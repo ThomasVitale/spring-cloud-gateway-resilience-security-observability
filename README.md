@@ -15,8 +15,8 @@ and OpenTelemetry.
 
 ## Stack
 
-* Java 24
-* Spring Boot 3.4
+* Java 25
+* Spring Boot 3.5
 * Podman/Docker
 
 ## Usage
@@ -44,17 +44,16 @@ OAuth2/OpenID Connect. You can log in as Isabelle (isabelle/password) or Bjorn (
 
 ## Observability Stack
 
-Both Spring Boot applications are observable, as any cloud native application should. Using [Arconia OpenTelemetry](https://arconia.io/docs/arconia/latest/opentelemetry/), both applications are configured to export logs, metrics, and traces automatically to an OpenTelemetry backend.
+Both Spring Boot applications are observable, as any cloud native application should. Using [Arconia OpenTelemetry](https://docs.arconia.io/arconia/latest/opentelemetry/), both applications are configured to export logs, metrics, and traces automatically to an OpenTelemetry backend.
 
-[Arconia Dev Services](https://arconia.io/docs/arconia/latest/dev-services/) provide zero-code dev services for a superior developer experience. When you run the Spring Boot applications, a Grafana observability platform based on OpenTelemetry is automatically run via Testcontainers and the applications configured to export telemetry to it, giving you the possibility to visualize and explore your application’s telemetry data during development and testing.
+[Arconia Dev Services](https://docs.arconia.io/arconia/latest/dev-services/) streamline your development workflow by automatically provisioning external services your application depends on during development and testing. No manual setup is required. With Arconia OpenTelemetry, you can leverage the Grafana LGTM Dev Service to automatically start a complete Grafana observability platform based on OpenTelemetry, allowing you to visualize and explore your application’s telemetry data during development and testing.
 
 The application logs will show you the URL where you can access the Grafana observability platform.
 
-```log
-...o.t.grafana.LgtmStackContainer: Access to the Grafana dashboard: http://localhost:#####
+```logs
+...o.t.grafana.LgtmStackContainer: Access to the Grafana dashboard: http://localhost:38125
 ```
 
 By default, logs, metrics, and traces are exported via OTLP using the HTTP/Protobuf format.
 
-In Grafana, you can query logs and traces from the "Explore" page, selecting the "Loki" and "Tempo" data sources, respectively.
-You can also explore metrics in "Drilldown > Metrics".
+In Grafana, you can query the telemetry from the "Drilldown" and "Explore" sections.

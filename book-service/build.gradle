@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.5'
+    id 'org.springframework.boot' version '3.5.7'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(25)
         nativeImageCapable = true
     }
 }
@@ -19,7 +19,7 @@ repositories {
 }
 
 ext {
-    set('arconiaVersion', "0.10.0")
+    set('arconiaVersion', "0.18.0")
     set('testKeycloakVersion', "3.7.0")
 }
 
@@ -30,7 +30,7 @@ dependencies {
     implementation 'io.arconia:arconia-opentelemetry-spring-boot-starter'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    testAndDevelopmentOnly 'io.arconia:arconia-dev-services-opentelemetry-lgtm'
+    testAndDevelopmentOnly 'io.arconia:arconia-dev-services-lgtm'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-webflux'

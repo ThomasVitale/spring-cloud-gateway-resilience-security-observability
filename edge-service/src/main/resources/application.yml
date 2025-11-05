@@ -29,6 +29,9 @@ spring:
   application:
     name: edge-service
 
+  reactor:
+    context-propagation: auto
+
   security:
     oauth2:
       client:
@@ -43,34 +46,36 @@ spring:
 
   cloud:
     gateway:
-      default-filters:
-        - SaveSession
-        - TokenRelay
-        - name: RequestRateLimiter
-          args:
-            redis-rate-limiter:
-              replenishRate: 10
-              burstCapacity: 20
-              requestedTokens: 1
-      routes:
-        - id: book-route
-          uri: ${BOOK_SERVICE_URL:http://localhost:9001}
-          predicates:
-            - Path=/books/**
-          filters:
-            - AddRequestHeader=X-Tenant,acme
-            - AddResponseHeader=X-Genre,fantasy
-            - name: CircuitBreaker
+      server:
+        webflux:
+          default-filters:
+            - SaveSession
+            - TokenRelay
+            - name: RequestRateLimiter
               args:
-                name: bookService
-                fallbackUri: forward:/books-fallback
-            - name: Retry
-              args:
-                retries: 3
-                method: GET
-                backoff:
-                  firstBackoff: 50ms
-                  maxBackoff: 500ms
+                redis-rate-limiter:
+                  replenishRate: 10
+                  burstCapacity: 20
+                  requestedTokens: 1
+          routes:
+            - id: book-route
+              uri: ${BOOK_SERVICE_URL:http://localhost:9001}
+              predicates:
+                - Path=/books/**
+              filters:
+                - AddRequestHeader=X-Tenant,acme
+                - AddResponseHeader=X-Genre,fantasy
+                - name: CircuitBreaker
+                  args:
+                    name: bookService
+                    fallbackUri: forward:/books-fallback
+                - name: Retry
+                  args:
+                    retries: 3
+                    method: GET
+                    backoff:
+                      firstBackoff: 50ms
+                      maxBackoff: 500ms
 
 resilience4j:
   circuitbreaker:
@@ -89,4 +94,5 @@ resilience4j:
 arconia:
   otel:
     metrics:
-      interval: 5s
+      exporter:
+        interval: 5s
